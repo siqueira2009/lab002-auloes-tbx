@@ -26,7 +26,7 @@ jobs:
         run: docker build -t trivy-python:latest -f trivy/python/Dockerfile trivy/python # Constrói a imagem Docker
 
       - name: Run Trivy vulnerability scanner in repo mode
-        uses: aquasecurity/trivy-action@0.36.0 # Usa a ação para executar o scanner de vulnerabilidades Trivy
+        uses: aquasecurity/trivy-action@v0.20.0 # Usa a ação para executar o scanner de vulnerabilidades Trivy
         with:
           scan-type: 'image' # Define o tipo de verificação
           image-ref: 'trivy-python:latest' # Define a referência da imagem
