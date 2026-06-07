@@ -1,0 +1,35 @@
+name: Secrets Check with Trufflehog
+on:
+  push:
+    branches:
+      - main  # Aciona o fluxo de trabalho quando houver push na branch main
+    paths:
+      - 'trufflehog/python'  # Aciona o fluxo de trabalho quando houver push na pasta trufflehog
+  pull_request:
+    branches:
+      - main # Aciona o fluxo de trabalho quando houver PR na branch main
+    paths:
+      - 'trufflehog/python'  # Aciona o fluxo de trabalho quando houver PR na pasta trufflehog
+  workflow_dispatch:  # Aciona manualmente o fluxo de trabalho
+    inputs:  # Define entradas para o fluxo de trabalho
+      name:  # Define a entrada "name"
+        description: 'Acionador manual do fluxo de trabalho'  # Descrição da entrada
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code # Ação para clonar o repositório
+      uses: actions/checkout@v4 # Usa a ação para clonar o repositório
+      
+    - name: Docker Build
+      run: docker build -t trufflehog-python:latest -f trufflehog/python/Dockerfile trufflehog/python # Constrói a imagem Docker
+
+    - name: Install TruffleHog
+      run: mkdir sec && cd sec && curl -sSfL https://raw.githubusercontent.com/trufflesecurity/trufflehog/main/scripts/install.sh | sh -s -- -b /usr/local/bin
+
+    - name: Secret Scanning with TruffleHog
+      run: |
+            ls trufflehog/python
+            trufflehog -h
+            trufflehog filesystem trufflehog/python
